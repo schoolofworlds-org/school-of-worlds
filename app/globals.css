@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/* stylelint-disable */
+@theme {
+  --color-brand-bg: #E8E4D8;
+  --color-brand-bg-secondary: #F5F3ED;
+  --color-brand-card: #FFFFFF;
+  --color-brand-border: #D6D0C4;
+  --color-brand-text: #1F2937;
+  --color-brand-text-muted: #4B5563;
+  --color-brand-button: #1F2937;
+  --color-brand-button-text: #FFFFFF;
+
+  --color-world-entrepreneurship: #F4A261;
+  --color-world-ai: #7C3AED;
+  --color-world-engineering: #2563EB;
+  --color-world-medical: #E63946;
+  --color-world-cybersecurity: #0E9F6E;
+  --color-world-finance: #22C55E;
+  --color-world-leadership: #14B8A6;
+  --color-world-sports: #FB8500;
+  --color-world-artist: #EC4899;
+  --color-world-history: #B08968;
+  --color-world-media: #FBBF24;
+
+  --font-sans: var(--font-inter);
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: #E8E4D8;
+  color: #1F2937;
+  font-family: var(--font-sans), sans-serif;
+}
