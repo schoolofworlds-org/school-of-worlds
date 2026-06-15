@@ -9,7 +9,7 @@ export default async function SignupPage({
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2 mx-auto">
-      <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-brand-text">
+      <form action={signup} className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-brand-text">
         <h1 className="text-3xl font-semibold text-center mb-8">Sign Up</h1>
         {message && (
           <p className={`mt-4 p-4 bg-brand-card border border-brand-border text-center rounded-xl ${message === 'Check your email and click the link to sign in' ? 'text-green-600' : 'text-red-500'}`}>
@@ -35,7 +35,7 @@ export default async function SignupPage({
           required
         />
         <button
-          formAction={signup}
+          type="submit"
           className="bg-brand-button text-brand-button-text rounded-xl px-4 py-3 font-medium hover:opacity-90 transition-opacity"
         >
           Sign Up
