@@ -35,9 +35,15 @@ export async function updateSession(request: NextRequest) {
 
   // Only these route trees require authentication. Everything else — including
   // `/`, `/login`, `/signup`, and `/auth/*` — passes through freely.
-  // (`/announcements`, `/community`, `/settings` are also auth-only, but the
-  // shared (app) layout guards those, so they don't need to be listed here.)
-  const protectedRoutes = ['/dashboard', '/worlds', '/missions', '/portfolio']
+  const protectedRoutes = [
+    '/dashboard',
+    '/worlds',
+    '/missions',
+    '/portfolio',
+    '/announcements',
+    '/community',
+    '/settings',
+  ]
   const isProtected = protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   )

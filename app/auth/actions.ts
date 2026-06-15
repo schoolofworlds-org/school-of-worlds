@@ -10,25 +10,20 @@ export async function login(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
+      // Login is for existing users only — never create an account here.
       shouldCreateUser: false,
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirm`,
+      // TODO: restore `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirm` before release.
+      emailRedirectTo: 'http://localhost:3000/auth/confirm',
     },
   })
 
-  console.log('========================')
-  console.log('LOGIN ATTEMPT')
-  console.log('Email:', email)
-  console.log('SITE_URL env:', process.env.NEXT_PUBLIC_SITE_URL)
-  console.log('Error object:', error)
-  console.log('Error message:', error?.message)
-  console.log('Error status:', error?.status)
-  console.log('========================')
-
   if (error) {
-    return redirect('/login?message=Could not authenticate user')
+    return redirect(
+      '/login?message=Could not send login link. Please check your email and try again.',
+    )
   }
 
-  return redirect('/login?message=Check your email and click the link to sign in')
+  return redirect('/login?message=Check your email for the sign-in link')
 }
 
 export async function signup(formData: FormData) {

@@ -5,11 +5,6 @@ import { createClient } from '@/utils/supabase/server'
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
 
-  console.log('=== AUTH CONFIRM HIT ===')
-  console.log('Full URL:', request.url)
-  console.log('Search params:',
-    Object.fromEntries(searchParams.entries()))
-
   const token_hash = searchParams.get('token_hash')
   const type = searchParams.get('type') as EmailOtpType | null
   const code = searchParams.get('code')
@@ -19,7 +14,6 @@ export async function GET(request: NextRequest) {
   // Handle PKCE code exchange (newer Supabase flow)
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-    console.log('Auth result error:', error)
     if (!error) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
@@ -31,13 +25,15 @@ export async function GET(request: NextRequest) {
       type,
       token_hash,
     })
-    console.log('Auth result error:', error)
     if (!error) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
 
   return NextResponse.redirect(
-    new URL('/login?message=Link invalid or expired', request.url)
+    new URL(
+      '/login?message=Link expired or invalid. Please request a new one.',
+      request.url,
+    ),
   )
 }
