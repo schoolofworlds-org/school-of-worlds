@@ -27,23 +27,23 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  // Debug step 1: dump everything that actually arrived in the FormData.
-  console.log('RAW FORMDATA ENTRIES:')
+  console.log('=== SIGNUP DEBUG ===')
+  console.log('FormData entries:')
   for (const [key, value] of formData.entries()) {
-    console.log(key, ':', value)
+    console.log(`  ${key}: ${value}`)
   }
+  console.log('SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
 
   const email = formData.get('email') as string
   const name = formData.get('name') as string
-  console.log('SIGNUP DATA:', { email, name })
-  console.log('SUPABASE URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
   const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       shouldCreateUser: true,
-      // Debug step 2: hardcoded instead of `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirm`.
+      // Temporarily hardcoded to rule out env-variable issues;
+      // restore `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirm` before release.
       emailRedirectTo: 'http://localhost:3000/auth/confirm',
       data: {
         full_name: name,
@@ -51,8 +51,8 @@ export async function signup(formData: FormData) {
     },
   })
 
-  // Debug step 3: full error detail (2.7s suggests Supabase SMTP/email failure).
-  console.log('FULL ERROR:', JSON.stringify(error))
+  console.log('Supabase response error:', JSON.stringify(error, null, 2))
+  console.log('=== END SIGNUP DEBUG ===')
 
   if (error) {
     return redirect('/signup?message=Could not create user')
