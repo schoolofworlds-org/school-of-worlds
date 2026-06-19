@@ -31,14 +31,27 @@ export default async function SignupPage({
         <input
           className="rounded-xl px-4 py-3 bg-brand-card text-brand-text border border-brand-border mb-6 focus:outline-none focus:ring-2 focus:ring-brand-border placeholder:text-brand-text-muted"
           name="email"
+          type="email"
           placeholder="you@example.com"
           required
         />
+        <label className="text-md font-medium" htmlFor="password">
+          Password
+        </label>
+        <input
+          className="rounded-xl px-4 py-3 bg-brand-card text-brand-text border border-brand-border focus:outline-none focus:ring-2 focus:ring-brand-border placeholder:text-brand-text-muted"
+          name="password"
+          type="password"
+          placeholder="••••••••"
+          minLength={6}
+          required
+        />
+        <p className="text-sm text-brand-text-muted mt-1 mb-6">At least 6 characters</p>
         <button
           type="submit"
           className="bg-brand-button text-brand-button-text rounded-xl px-4 py-3 font-medium hover:opacity-90 transition-opacity"
         >
-          Sign Up
+          Create Account
         </button>
         <div className="mt-8 text-center text-sm text-brand-text-muted">
           Already have an account?{' '}
