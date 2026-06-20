@@ -42,7 +42,6 @@ export default async function SignupPage({
           className="rounded-xl px-4 py-3 bg-brand-card text-brand-text border border-brand-border focus:outline-none focus:ring-2 focus:ring-brand-border placeholder:text-brand-text-muted"
           name="password"
           type="password"
-          placeholder="••••••••"
           minLength={6}
           required
         />
