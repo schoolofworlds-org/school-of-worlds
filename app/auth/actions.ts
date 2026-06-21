@@ -26,7 +26,10 @@ export async function signup(formData: FormData) {
   const password = formData.get('password') as string
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signUp({
+  console.log('=== SIGNUP START ===')
+  console.log('name:', name, 'email:', email)
+
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -35,6 +38,10 @@ export async function signup(formData: FormData) {
       },
     },
   })
+
+  console.log('SIGNUP RESULT - data:', JSON.stringify(data, null, 2))
+  console.log('SIGNUP RESULT - error:', JSON.stringify(error, null, 2))
+  console.log('=== SIGNUP END ===')
 
   if (error) {
     return redirect('/signup?message=' + encodeURIComponent(error.message))
