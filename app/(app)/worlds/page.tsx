@@ -9,9 +9,9 @@ type World = {
 }
 
 const statusStyles: Record<string, string> = {
-  active: 'bg-green-100 text-green-700',
-  completed: 'bg-blue-100 text-blue-700',
-  locked: 'bg-gray-200 text-gray-600',
+  'in progress': 'bg-green-100 text-green-700',
+  'starting soon': 'bg-amber-100 text-amber-700',
+  'not started': 'bg-gray-200 text-gray-600',
 }
 
 export default async function WorldsPage() {
@@ -42,7 +42,7 @@ export default async function WorldsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {(worlds as World[] | null)?.map((world) => {
-          const badge = statusStyles[world.status] ?? 'bg-gray-100 text-gray-600'
+          const badge = statusStyles[world.status?.toLowerCase()] ?? 'bg-gray-100 text-gray-600'
           return (
             <Link
               key={world.id}
