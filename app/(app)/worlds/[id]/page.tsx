@@ -39,19 +39,20 @@ export default async function WorldDetailPage({
 
   const { data: missionsData } = await supabase
     .from('missions')
-    .select('id, week_number, title, description, xp_value')
+    .select('id, week_number, title, description, xp_value, mission_type, unlock_order')
     .eq('world_id', id)
     .order('week_number', { ascending: true })
-    .order('created_at', { ascending: true })
+    .order('unlock_order', { ascending: true, nullsFirst: false })
 
   const missions = (missionsData as Mission[] | null) ?? []
 
-  // Enrollment: a user is enrolled in the world referenced by users.world_id.
+  // Enrollment + the user's submission status for each mission in this world.
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   let isEnrolled = false
+  const statusMap: Record<string, string> = {}
   if (user) {
     const { data: profile } = await supabase
       .from('users')
@@ -59,6 +60,18 @@ export default async function WorldDetailPage({
       .eq('id', user.id)
       .maybeSingle()
     isEnrolled = profile?.world_id === id
+
+    const missionIds = missions.map((m) => m.id)
+    if (missionIds.length > 0) {
+      const { data: subs } = await supabase
+        .from('mission_submissions')
+        .select('mission_id, status')
+        .eq('user_id', user.id)
+        .in('mission_id', missionIds)
+      for (const s of subs ?? []) {
+        statusMap[s.mission_id as string] = s.status as string
+      }
+    }
   }
 
   const statusBadge =
@@ -103,8 +116,8 @@ export default async function WorldDetailPage({
         )}
       </div>
 
-      {/* Missions with week tabs + week quest */}
-      <MissionsSection missions={missions} />
+      {/* Missions with week tabs, quests, and final summit */}
+      <MissionsSection missions={missions} statusMap={statusMap} />
     </div>
   )
 }

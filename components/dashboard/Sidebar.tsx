@@ -13,6 +13,7 @@ import {
   LogOut
 } from 'lucide-react'
 import { logout } from '@/app/auth/actions'
+import { levelFromXp, xpIntoLevel, XP_PER_LEVEL } from '@/lib/level'
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -26,9 +27,10 @@ const navItems = [
 type SidebarProps = {
   userName: string
   userEmail: string
+  xpTotal: number
 }
 
-export default function Sidebar({ userName, userEmail }: SidebarProps) {
+export default function Sidebar({ userName, userEmail, xpTotal }: SidebarProps) {
   const pathname = usePathname()
 
   const initials = userName
@@ -38,6 +40,10 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
     .slice(0, 2)
     .join('')
     .toUpperCase()
+
+  const level = levelFromXp(xpTotal)
+  const xpInLevel = xpIntoLevel(xpTotal)
+  const levelPct = Math.round((xpInLevel / XP_PER_LEVEL) * 100)
 
   return (
     <aside className="w-64 bg-white border-r border-[#D6D0C4] flex flex-col h-full shrink-0">
@@ -90,11 +96,11 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
            
            <div className="space-y-1">
              <div className="flex justify-between text-xs font-medium text-[#1F2937]">
-               <span>XP Progress</span>
-               <span>1,250 / 2,000</span>
+               <span>Level {level}</span>
+               <span>{xpInLevel} / {XP_PER_LEVEL} XP</span>
              </div>
              <div className="h-2 w-full bg-[#D6D0C4] rounded-full overflow-hidden">
-                <div className="h-full bg-[#1F2937] w-[62.5%] rounded-full"></div>
+                <div className="h-full bg-[#1F2937] rounded-full" style={{ width: `${levelPct}%` }}></div>
              </div>
            </div>
         </div>

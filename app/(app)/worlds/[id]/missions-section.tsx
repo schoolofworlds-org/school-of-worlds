@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Lock, PlayCircle, Trophy } from 'lucide-react'
+import Link from 'next/link'
+import { Trophy, Crown, ChevronRight } from 'lucide-react'
 
 export type Mission = {
   id: string
@@ -9,24 +10,36 @@ export type Mission = {
   title: string
   description: string | null
   xp_value: number
+  mission_type: string
+  unlock_order: number | null
 }
 
-// First 100 characters + "..." when longer.
-function preview(text: string | null) {
-  if (!text) return ''
-  return text.length > 100 ? `${text.slice(0, 100)}...` : text
+function statusBadge(status?: string) {
+  if (status === 'graded')
+    return { label: 'Graded', cls: 'bg-green-100 text-green-700' }
+  if (status === 'submitted')
+    return { label: 'Submitted', cls: 'bg-orange-100 text-orange-700' }
+  return { label: 'Not Started', cls: 'bg-gray-200 text-gray-600' }
 }
 
-export default function MissionsSection({ missions }: { missions: Mission[] }) {
+export default function MissionsSection({
+  missions,
+  statusMap,
+}: {
+  missions: Mission[]
+  statusMap: Record<string, string>
+}) {
   const weeks = Array.from(new Set(missions.map((m) => m.week_number))).sort(
     (a, b) => a - b,
   )
   const [activeWeek, setActiveWeek] = useState(weeks[0] ?? 1)
 
   const weekMissions = missions.filter((m) => m.week_number === activeWeek)
-  // Per spec: Week 1 is Available, every other week is Locked.
-  const isAvailable = activeWeek === 1
-  const totalXp = weekMissions.reduce((sum, m) => sum + m.xp_value, 0)
+  const quests = weekMissions.filter((m) => m.mission_type === 'quest')
+  const summits = weekMissions.filter((m) => m.mission_type === 'summit')
+  const regular = weekMissions
+    .filter((m) => m.mission_type === 'mission')
+    .sort((a, b) => (a.unlock_order ?? 0) - (b.unlock_order ?? 0))
 
   return (
     <div>
@@ -52,85 +65,117 @@ export default function MissionsSection({ missions }: { missions: Mission[] }) {
         </div>
       )}
 
-      {/* Mission cards for the active week */}
-      {weekMissions.length === 0 ? (
+      {/* Weekly quest(s) — larger cards above the missions */}
+      {quests.map((quest) => {
+        const badge = statusBadge(statusMap[quest.id])
+        return (
+          <Link
+            key={quest.id}
+            href={`/missions/${quest.id}`}
+            className="group block bg-white rounded-xl border border-[#D6D0C4] shadow-sm p-6 mb-4 hover:shadow-md transition-shadow"
+            style={{ borderLeftWidth: 6, borderLeftColor: '#F59E0B' }}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 min-w-0">
+                <Trophy size={22} className="text-amber-500 shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  <span className="text-xs font-semibold text-amber-600 uppercase tracking-wide">
+                    Weekly Quest
+                  </span>
+                  <h3 className="text-lg font-bold text-[#1F2937] group-hover:underline">
+                    {quest.title}
+                  </h3>
+                </div>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-xs font-semibold shrink-0 ${badge.cls}`}>
+                {badge.label}
+              </span>
+            </div>
+            <div className="flex items-center gap-3 mt-3 text-sm">
+              <span className="px-2.5 py-1 rounded-full bg-[#E8E4D8] text-xs font-semibold text-[#1F2937]">
+                {quest.xp_value} XP
+              </span>
+              <span className="inline-flex items-center text-[#4B5563] group-hover:text-[#1F2937] text-xs font-medium ml-auto">
+                Open <ChevronRight size={14} />
+              </span>
+            </div>
+          </Link>
+        )
+      })}
+
+      {/* Mission cards */}
+      {regular.length === 0 && quests.length === 0 && summits.length === 0 ? (
         <div className="bg-white border border-[#D6D0C4] rounded-xl p-10 text-center text-[#4B5563]">
-          No missions for this week yet.
+          Nothing for this week yet.
         </div>
       ) : (
         <div className="space-y-3">
-          {weekMissions.map((mission) => (
-            <div
-              key={mission.id}
-              className={`bg-white rounded-xl p-5 border border-[#D6D0C4] shadow-sm ${
-                isAvailable ? '' : 'opacity-70'
-              }`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <span className="inline-block text-xs font-semibold text-[#4B5563] uppercase tracking-wide mb-1">
-                    Week {mission.week_number}
+          {regular.map((mission) => {
+            const badge = statusBadge(statusMap[mission.id])
+            return (
+              <Link
+                key={mission.id}
+                href={`/missions/${mission.id}`}
+                className="group block bg-white rounded-xl p-5 border border-[#D6D0C4] shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <span className="inline-block text-xs font-semibold text-[#4B5563] uppercase tracking-wide mb-1">
+                      Mission
+                    </span>
+                    <h4 className="font-bold text-[#1F2937] group-hover:underline">
+                      {mission.title}
+                    </h4>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold shrink-0 ${badge.cls}`}>
+                    {badge.label}
                   </span>
-                  <h4 className="font-bold text-[#1F2937]">{mission.title}</h4>
                 </div>
-                {isAvailable ? (
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 shrink-0">
-                    Available
+                <div className="mt-3">
+                  <span className="px-2.5 py-1 rounded-full bg-[#E8E4D8] text-xs font-semibold text-[#1F2937]">
+                    {mission.xp_value} XP
                   </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-600 shrink-0">
-                    <Lock size={14} />
-                    Locked
-                  </span>
-                )}
-              </div>
-
-              {mission.description && (
-                <p className="text-sm text-[#4B5563] mt-2">
-                  {preview(mission.description)}
-                </p>
-              )}
-
-              <div className="flex items-center justify-between gap-3 mt-4">
-                <span className="px-2.5 py-1 rounded-full bg-[#E8E4D8] text-xs font-semibold text-[#1F2937]">
-                  {mission.xp_value} XP
-                </span>
-                {isAvailable ? (
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-2 bg-[#1F2937] text-white rounded-xl px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity"
-                  >
-                    <PlayCircle size={16} />
-                    Start Mission
-                  </button>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#4B5563]">
-                    <Lock size={14} />
-                    Locked
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
+                </div>
+              </Link>
+            )
+          })}
         </div>
       )}
 
-      {/* Week Quest (derived from this week's missions — no quests table exists) */}
-      <div className="mt-8 bg-white rounded-xl p-6 border border-[#D6D0C4] shadow-sm">
-        <div className="flex items-center gap-2 mb-2">
-          <Trophy size={20} className="text-[#1F2937]" />
-          <h3 className="text-lg font-bold text-[#1F2937]">
-            Week {activeWeek} Quest
-          </h3>
-        </div>
-        <p className="text-sm text-[#4B5563]">
-          {weekMissions.length > 0
-            ? `Complete all ${weekMissions.length} mission${
-                weekMissions.length === 1 ? '' : 's'
-              } in Week ${activeWeek} to finish this week's quest and earn ${totalXp} XP.`
-            : `No quest available for Week ${activeWeek} yet.`}
-        </p>
-      </div>
+      {/* Final Summit — bottom of its week */}
+      {summits.map((summit) => {
+        const badge = statusBadge(statusMap[summit.id])
+        return (
+          <Link
+            key={summit.id}
+            href={`/missions/${summit.id}`}
+            className="group block bg-white rounded-xl border border-[#D6D0C4] shadow-sm p-6 mt-4 hover:shadow-md transition-shadow"
+            style={{ borderLeftWidth: 6, borderLeftColor: '#7C3AED' }}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 min-w-0">
+                <Crown size={22} className="text-purple-600 shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">
+                    Final Summit
+                  </span>
+                  <h3 className="text-lg font-bold text-[#1F2937] group-hover:underline">
+                    {summit.title}
+                  </h3>
+                </div>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-xs font-semibold shrink-0 ${badge.cls}`}>
+                {badge.label}
+              </span>
+            </div>
+            <div className="mt-3">
+              <span className="px-2.5 py-1 rounded-full bg-[#E8E4D8] text-xs font-semibold text-[#1F2937]">
+                {summit.xp_value} XP
+              </span>
+            </div>
+          </Link>
+        )
+      })}
     </div>
   )
 }
