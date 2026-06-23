@@ -23,6 +23,57 @@
   --color-world-history: #B08968;
   --color-world-media: #FBBF24;
 
+  /* --- Stitch dashboard design tokens (additive; used only by the dashboard) --- */
+  --color-surface: #FFFFFF;
+  --color-surface-variant: #F5F1E8;
+  --color-border-subtle: #E5DDD0;
+  --color-primary: #0B1220;
+  --color-secondary: #605E58;
+  --color-on-surface: #0B1220;
+  --color-on-surface-variant: #45474C;
+  --color-world-business: #00B894;
+  --color-world-stem: #5E6AD2;
+  --color-world-humanities: #FF8C00;
+  --color-world-arts: #EF5DA8;
+
+  /* Headline = Plus Jakarta Sans, body/label = Inter (--font-jakarta added in app/layout.tsx) */
+  --font-headline-lg: var(--font-jakarta);
+  --font-headline-lg-mobile: var(--font-jakarta);
+  --font-headline-md: var(--font-jakarta);
+  --font-headline-sm: var(--font-jakarta);
+  --font-body-lg: var(--font-inter);
+  --font-body-md: var(--font-inter);
+  --font-label-md: var(--font-inter);
+  --font-label-sm: var(--font-inter);
+
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 1.2;
+  --text-headline-lg--letter-spacing: -0.01em;
+  --text-headline-lg--font-weight: 600;
+  --text-headline-lg-mobile: 28px;
+  --text-headline-lg-mobile--line-height: 1.2;
+  --text-headline-lg-mobile--font-weight: 600;
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 1.3;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 600;
+  --text-headline-sm: 18px;
+  --text-headline-sm--line-height: 1.4;
+  --text-headline-sm--font-weight: 500;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 1.6;
+  --text-body-lg--font-weight: 400;
+  --text-body-md: 16px;
+  --text-body-md--line-height: 1.6;
+  --text-body-md--font-weight: 400;
+  --text-label-md: 14px;
+  --text-label-md--line-height: 1.4;
+  --text-label-md--letter-spacing: 0.05em;
+  --text-label-md--font-weight: 600;
+  --text-label-sm: 12px;
+  --text-label-sm--line-height: 1.4;
+  --text-label-sm--font-weight: 400;
+
   --font-sans: var(--font-inter);
 }
 
