@@ -2,6 +2,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google'
 import { Mail } from 'lucide-react'
 import { login } from '@/app/auth/actions'
 import PasswordField from './password-field'
+import GoogleSignInButton from '@/components/google-sign-in-button'
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], weight: ['600', '700'] })
 
@@ -84,6 +85,7 @@ export default async function LoginPage({
               <span className="text-xs uppercase tracking-widest text-[#c6c6cc]">or</span>
               <div className="h-px flex-1 bg-[#c6c6cc]/30" />
             </div>
+            <GoogleSignInButton />
             <p className="text-base text-[#605e58]">
               Don&apos;t have an account?{' '}
               <a href="/signup" className="text-black font-semibold hover:underline underline-offset-4">
