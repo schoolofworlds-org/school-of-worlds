@@ -11,12 +11,13 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient()
 
-  // Handle PKCE code exchange (newer Supabase flow)
+  // Handle OAuth / PKCE code exchange (Google sign-in and magic links)
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
+    return NextResponse.redirect(new URL('/login?error=oauth_failed', request.url))
   }
 
   // Handle token_hash flow (older flow)
