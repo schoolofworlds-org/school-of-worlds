@@ -107,6 +107,7 @@ export default function SubmissionForm({
       .from('submissions')
       .upload(path, file, { upsert: true })
     if (upErr) {
+      console.error('[SubmissionForm] upload failed:', upErr)
       setUploading(null)
       setRowErrors((e) => ({ ...e, [fieldKey]: 'Upload failed. Try again.' }))
       return
@@ -117,6 +118,7 @@ export default function SubmissionForm({
       .createSignedUrl(path, YEAR_SECONDS)
     setUploading(null)
     if (urlErr || !data) {
+      console.error('[SubmissionForm] createSignedUrl failed:', urlErr)
       setRowErrors((e) => ({ ...e, [fieldKey]: 'Could not link file. Try again.' }))
       return
     }
