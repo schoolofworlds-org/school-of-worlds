@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { notFound, redirect } from 'next/navigation'
-import { revalidatePath } from 'next/cache'
-import { ArrowLeft, CheckCircle2, Square, Sparkles } from 'lucide-react'
+import { notFound } from 'next/navigation'
+import { ArrowLeft, Square } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
+import SubmissionForm, { type SubmissionRow } from '@/components/missions/SubmissionForm'
 
 type Mission = {
   id: string
@@ -14,14 +14,6 @@ type Mission = {
   requirements: string | null
   xp_value: number
   mission_type: string
-}
-
-type Submission = {
-  submission_text: string | null
-  discord_link: string | null
-  status: string
-  xp_awarded: number | null
-  submitted_at: string
 }
 
 const typeMeta: Record<string, { label: string; cls: string }> = {
@@ -37,23 +29,12 @@ const DEFAULT_REQUIREMENTS = [
   'Reflection Document',
 ]
 
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
-
 export default async function MissionDetailPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ submitted?: string; error?: string }>
 }) {
   const { id } = await params
-  const { submitted, error: errorParam } = await searchParams
   const supabase = await createClient()
 
   const { data: mission } = await supabase
@@ -79,49 +60,17 @@ export default async function MissionDetailPage({
     data: { user },
   } = await supabase.auth.getUser()
 
-  let submission: Submission | null = null
+  let submission: SubmissionRow | null = null
   if (user) {
     const { data } = await supabase
       .from('mission_submissions')
-      .select('submission_text, discord_link, status, xp_awarded, submitted_at')
+      .select(
+        'submission_text, discord_link, xp_awarded, mission_report_url, research_notes_url, ai_prompt_log_url, reflection_document_url',
+      )
       .eq('mission_id', id)
       .eq('user_id', user.id)
       .maybeSingle()
-    submission = (data as Submission | null) ?? null
-  }
-
-  // Server Action — record the submission. The DB trigger awards XP.
-  async function submitMission(formData: FormData) {
-    'use server'
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
-      redirect('/login')
-    }
-
-    const submissionText =
-      (formData.get('submission_text') as string)?.trim() || null
-    const discordLink =
-      (formData.get('discord_link') as string)?.trim() || null
-
-    const { error } = await supabase.from('mission_submissions').insert({
-      user_id: user.id,
-      mission_id: id,
-      submission_text: submissionText,
-      discord_link: discordLink,
-      status: 'submitted',
-    })
-
-    // 23505 = unique violation (already submitted) — fall through to success view.
-    if (error && error.code !== '23505') {
-      redirect(`/missions/${id}?error=1`)
-    }
-
-    revalidatePath(`/missions/${id}`)
-    revalidatePath('/dashboard')
-    redirect(`/missions/${id}?submitted=1`)
+    submission = (data as SubmissionRow | null) ?? null
   }
 
   const type = typeMeta[mission.mission_type] ?? typeMeta.mission
@@ -207,82 +156,12 @@ export default async function MissionDetailPage({
       {/* Submission */}
       <h2 className="text-xl font-bold text-[#1F2937] mb-4">Submit Your Work</h2>
 
-      {submission ? (
-        <div className="bg-green-50 border border-green-200 rounded-xl p-6">
-          <div className="flex items-center gap-2 text-green-700 font-semibold">
-            <CheckCircle2 size={18} />
-            {submitted ? 'Mission submitted!' : 'Already submitted'}
-          </div>
-          <div
-            className={`inline-flex items-center gap-1.5 mt-3 px-4 py-2 rounded-xl bg-[#1F2937] text-white font-bold ${
-              submitted ? 'animate-xp-pop' : ''
-            }`}
-          >
-            <Sparkles size={16} />+{submission.xp_awarded ?? mission.xp_value} XP
-          </div>
-          <p className="text-sm text-[#4B5563] mt-3">
-            Submitted on {formatDate(submission.submitted_at)}.
-          </p>
-          {submission.discord_link && (
-            <a
-              href={submission.discord_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-[#1F2937] underline break-all mt-1 inline-block"
-            >
-              {submission.discord_link}
-            </a>
-          )}
-        </div>
-      ) : (
-        <form
-          action={submitMission}
-          className="bg-white rounded-xl border border-[#D6D0C4] shadow-sm p-6 space-y-4"
-        >
-          {errorParam && (
-            <p className="text-sm text-red-500">
-              Could not save your submission. Please try again.
-            </p>
-          )}
-          <div>
-            <label
-              htmlFor="submission_text"
-              className="block text-sm font-medium text-[#1F2937] mb-1"
-            >
-              Notes / what you did
-            </label>
-            <textarea
-              id="submission_text"
-              name="submission_text"
-              rows={5}
-              placeholder="Describe what you did, paste notes, or summarize your work…"
-              className="w-full rounded-xl px-4 py-3 bg-white text-[#1F2937] border border-[#D6D0C4] focus:outline-none focus:ring-2 focus:ring-[#D6D0C4] placeholder:text-[#4B5563]"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="discord_link"
-              className="block text-sm font-medium text-[#1F2937] mb-1"
-            >
-              Discord Submission Link
-            </label>
-            <input
-              id="discord_link"
-              name="discord_link"
-              type="url"
-              required
-              placeholder="https://discord.com/channels/..."
-              className="w-full rounded-xl px-4 py-3 bg-white text-[#1F2937] border border-[#D6D0C4] focus:outline-none focus:ring-2 focus:ring-[#D6D0C4] placeholder:text-[#4B5563]"
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-[#1F2937] text-white rounded-xl px-5 py-3 font-medium hover:opacity-90 transition-opacity"
-          >
-            Submit Mission
-          </button>
-        </form>
-      )}
+      <SubmissionForm
+        missionId={mission.id}
+        userId={user?.id ?? null}
+        xpValue={mission.xp_value}
+        submission={submission}
+      />
     </div>
   )
 }
