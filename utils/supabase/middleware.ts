@@ -41,7 +41,6 @@ export async function updateSession(request: NextRequest) {
     '/missions',
     '/portfolio',
     '/announcements',
-    '/community',
     '/settings',
   ]
   const isProtected = protectedRoutes.some(

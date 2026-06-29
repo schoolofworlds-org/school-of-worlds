@@ -2,39 +2,28 @@
 
 /* stylelint-disable */
 @theme {
-  --color-brand-bg: #E8E4D8;
-  --color-brand-bg-secondary: #F5F3ED;
-  --color-brand-card: #FFFFFF;
-  --color-brand-border: #D6D0C4;
-  --color-brand-text: #1F2937;
-  --color-brand-text-muted: #4B5563;
-  --color-brand-button: #1F2937;
-  --color-brand-button-text: #FFFFFF;
-
-  --color-world-entrepreneurship: #F4A261;
-  --color-world-ai: #7C3AED;
-  --color-world-engineering: #2563EB;
-  --color-world-medical: #E63946;
-  --color-world-cybersecurity: #0E9F6E;
-  --color-world-finance: #22C55E;
-  --color-world-leadership: #14B8A6;
-  --color-world-sports: #FB8500;
-  --color-world-artist: #EC4899;
-  --color-world-history: #B08968;
-  --color-world-media: #FBBF24;
-
-  /* --- Stitch dashboard design tokens (additive; used only by the dashboard) --- */
+  /* Locked palette — STYLIZE.md is the single source of truth */
+  --color-background: #F5F1E8;
   --color-surface: #FFFFFF;
+  --color-border: #E5DDD0;
+  --color-primary: #0B1220;
+  --color-secondary-text: #4B5563;
+
+  /* World accents — used ONLY on that world's own page */
+  --color-accent-entrepreneurship: #F4A261;
+  --color-accent-ai: #7C3AED;
+  --color-accent-engineering: #2563EB;
+  --color-accent-medical: #E63946;
+  --color-accent-cybersecurity: #0E9F6E;
+  --color-accent-finance: #22C55E;
+  --color-accent-leadership: #14B8A6;
+
+  /* Stitch tokens still referenced by app/(app)/dashboard/page.tsx */
   --color-surface-variant: #F5F1E8;
   --color-border-subtle: #E5DDD0;
-  --color-primary: #0B1220;
   --color-secondary: #605E58;
   --color-on-surface: #0B1220;
   --color-on-surface-variant: #45474C;
-  --color-world-business: #00B894;
-  --color-world-stem: #5E6AD2;
-  --color-world-humanities: #FF8C00;
-  --color-world-arts: #EF5DA8;
 
   /* Headline = Plus Jakarta Sans, body/label = Inter (--font-jakarta added in app/layout.tsx) */
   --font-headline-lg: var(--font-jakarta);
@@ -82,8 +71,8 @@
 }
 
 body {
-  background-color: #E8E4D8;
-  color: #1F2937;
+  background-color: #F5F1E8;
+  color: #0B1220;
   font-family: var(--font-sans), sans-serif;
 }
 
