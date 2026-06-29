@@ -1,9 +1,5 @@
 import Link from 'next/link'
 import {
-  Search,
-  Calendar,
-  HelpCircle,
-  Zap,
   CalendarDays,
   Users,
   Play,
@@ -116,38 +112,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-full bg-white text-on-surface font-body-md text-body-md">
-      {/* Top app bar */}
-      <header className="h-16 sticky top-0 bg-white border-b border-border-subtle z-40 flex justify-between items-center px-8">
-        <div className="flex items-center gap-4 w-1/3">
-          <div className="relative w-full max-w-sm">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
-            {/* Visual only for now */}
-            <input
-              type="text"
-              placeholder="Search for missions, worlds, or students..."
-              className="w-full pl-10 pr-4 py-2 bg-surface-variant border border-border-subtle rounded-[0.5rem] focus:ring-0 focus:border-primary text-body-md transition-all"
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4 text-secondary">
-            <button className="hover:text-primary transition-colors" aria-label="Calendar">
-              <Calendar size={22} />
-            </button>
-            <button className="hover:text-primary transition-colors" aria-label="Help">
-              <HelpCircle size={22} />
-            </button>
-          </div>
-          <div className="h-8 w-px bg-border-subtle" />
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-[0.5rem] bg-surface-variant border border-border-subtle flex items-center justify-center">
-              <Zap size={18} className="text-primary fill-primary" />
-            </div>
-            <span className="font-label-md font-bold text-primary">1 Day Streak</span>
-          </div>
-        </div>
-      </header>
-
       {/* Content */}
       <div className="p-8">
         <div className="max-w-[1200px] mx-auto grid grid-cols-12 gap-8">
@@ -208,12 +172,7 @@ export default async function DashboardPage() {
                         <p className="text-on-surface-variant text-[14px] leading-relaxed mb-6 line-clamp-2">
                           {w.description}
                         </p>
-                        <div className="flex items-center justify-between pt-6 border-t border-border-subtle">
-                          <div className="flex -space-x-2">
-                            <div className="w-8 h-8 rounded-full border-2 border-surface-variant bg-slate-200" />
-                            <div className="w-8 h-8 rounded-full border-2 border-surface-variant bg-slate-300" />
-                            <div className="w-8 h-8 rounded-full border-2 border-surface-variant bg-slate-400" />
-                          </div>
+                        <div className="flex items-center justify-end pt-6 border-t border-border-subtle">
                           <Link
                             href={`/worlds/${w.id}`}
                             className="bg-primary text-white font-label-md px-6 py-2.5 rounded-[0.5rem] hover:bg-primary/90 transition-all active:scale-[0.98]"

@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   Globe,
-  Users,
   FolderOpen,
   Bell,
   Settings,
@@ -18,7 +17,6 @@ import { levelFromXp, xpIntoLevel, XP_PER_LEVEL } from '@/lib/level'
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Worlds', href: '/worlds', icon: Globe },
-  { name: 'Community', href: '/community', icon: Users },
   { name: 'Portfolio', href: '/portfolio', icon: FolderOpen },
   { name: 'Announcements', href: '/announcements', icon: Bell },
   { name: 'Settings', href: '/settings', icon: Settings },
